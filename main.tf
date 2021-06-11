@@ -15,8 +15,8 @@ resource "aws_instance" "tomcat-server" {
 }
 
 #creating an SG group and assigining it to the tomcat-server instance
-resource "aws_security_group" "tomcat_sg" {
-	name = "tomcat_sg"
+resource "aws_security_group" "tomcat-sg" {
+	name = "tomcat-sg"
 	ingress {
 		cidr_blocks = ["99.227.118.13/32"]
 		from_port = 8080
@@ -30,6 +30,6 @@ resource "aws_security_group" "tomcat_sg" {
 		protocol = "-1"
 	}
 	tags = {
-		Name = "tomcat_sg"
+		Name = "tomcat-sg"
 	}
 }
