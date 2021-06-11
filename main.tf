@@ -170,3 +170,13 @@ resource "aws_instance" "jenkins-slave-ansible" {
 	}
 }
 
+#resource for creating a S3 Bucket (234564-prod-webdeploy)
+resource "aws_s3_bucket" "234564-prod-webdeploy" {
+  bucket = "234564-prod-webdeploy"
+  acl = "private"
+
+  tags = {
+    Name = "234564-prod-webdeploy"
+  }
+}
+
