@@ -9,6 +9,7 @@ resource "aws_instance" "tomcat-server" {
 	ami = "ami-07625b74039b1a58b"
 	instance_type = "t2.micro"
 	key_name = "trail-key"
+	security_groups = ["${aws_security_group.tomcat-sg.name}"]
 	tags = {
 		Name = "tomcat-server" 			
 	}
