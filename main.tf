@@ -170,6 +170,37 @@ resource "aws_instance" "jenkins-slave-ansible" {
 	}
 }
 
+#creating an ec2 instance for deploying docker into it
+resource "aws_instance" "docker-deployment-instance" {
+	ami = "ami-07625b74039b1a58b"
+	instance_type = "t2.micro"
+	key_name = "trail-key"
+	security_groups = ["${aws_security_group.docker-sg.name}"]
+	tags = {
+		Name = "docker-deployment-instance" 			
+	}
+}
+#creating a subsequent security group for docker-deployment-instance
+resource "aws_security_group" "docker-sg" {
+	name = "docker-sg"
+	ingress {
+		cidr_blocks = ["99.227.118.13/32"]
+		from_port = 8080
+		to_port = 8080
+		protocol = "tcp"
+	}
+	egress {
+		cidr_blocks = ["0.0.0.0/0"]
+		from_port = 0
+		to_port = 0
+		protocol = "-1"
+	}
+	tags = {
+		Name = "docker-sg"
+	}
+}
+
+
 #resource for creating a S3 Bucket (prod-webdeploy-234564)
 resource "aws_s3_bucket" "prod-webdeploy-234564" {
   bucket = "prod-webdeploy-234564"
