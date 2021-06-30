@@ -171,22 +171,40 @@ resource "aws_instance" "jenkins-slave-ansible" {
 }
 
 #creating an ec2 instance for deploying docker into it
-resource "aws_instance" "docker-deployment-instance" {
-	ami = "ami-07625b74039b1a58b"
+resource "aws_instance" "docker-deployment" {
+	ami = "ami-07d95746fec4b20a3"
 	instance_type = "t2.micro"
 	key_name = "trail-key"
 	security_groups = ["${aws_security_group.docker-sg.name}"]
 	tags = {
-		Name = "docker-deployment-instance" 			
+		Name = "docker-deployment" 			
 	}
 }
-#creating a subsequent security group for docker-deployment-instance
+#creating a subsequent security group for docker-deployment
 resource "aws_security_group" "docker-sg" {
 	name = "docker-sg"
 	ingress {
 		cidr_blocks = ["99.227.118.13/32"]
 		from_port = 8080
 		to_port = 8080
+		protocol = "tcp"
+	}
+	ingress {
+		cidr_blocks = ["99.227.118.13/32"]
+		from_port = 80
+		to_port = 80
+		protocol = "tcp"
+	}
+	ingress {
+		cidr_blocks = ["99.227.118.13/32"]
+		from_port = 22
+		to_port = 22
+		protocol = "tcp"
+	}
+	ingress {
+		cidr_blocks = ["99.227.118.13/32"]
+		from_port = 443
+		to_port = 443
 		protocol = "tcp"
 	}
 	egress {
