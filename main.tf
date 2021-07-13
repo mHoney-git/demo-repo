@@ -219,6 +219,63 @@ resource "aws_security_group" "docker-sg" {
 }
 
 
+resource "aws_iam_role_policy" "lambda_policy" {
+  name = "lambda_policy"
+  role = "${aws_iam_role.lambda_role.id}"
+
+  policy = jsonencode({
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "Stmt1626203071503",
+      "Action": "logs:*",
+      "Effect": "Allow",
+      "Resource": "*"
+    }
+  ]
+  })
+}
+
+resource "aws_iam_role" "lambda_role" {
+  name = "lambda_role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          Service = "lambda.amazonaws.com"
+        }
+      },
+    ]
+  })
+}
+
+locals {
+  lambda_zip_location = "outputs/hello-world.zip"
+}
+
+data "archive_file" "hello-world" {
+  type        = "zip"
+  source_file = "hello-world.py"
+  output_path = "${local.lambda_zip_location}"
+}
+
+resource "aws_lambda_function" "test_lambda" {
+  filename      = "${local.lambda_zip_location}"
+  function_name = "hello-world"
+  role          = "${aws_iam_role.lambda_role.arn}"
+  handler       = "hello-world.hello"
+
+  #source_code_hash = filebase64sha256("lambda_function_payload.zip")
+
+  runtime = "python3.7"
+}
+
+
 #resource for creating a S3 Bucket (prod-webdeploy-234564)
 resource "aws_s3_bucket" "prod-webdeploy-234564" {
   bucket = "prod-webdeploy-234564"
